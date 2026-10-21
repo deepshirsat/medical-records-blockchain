@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedLedger | Medical Records</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">M</span><span>MedLedger<small>BLOCKCHAIN RECORD REGISTRY</small></span></a>
+    <div class="wallet-area">
+      <span class="mode-badge"><i></i> LOCAL NODE</span>
+      <select id="accountSelector" class="account-select" title="Switch active test account">
+        <option value="0">Account #0 — Owner (Admin)</option>
+        <option value="1">Account #1 — Dr. Sarah (Provider)</option>
+        <option value="2">Account #2 — Guest (Unauthorized)</option>
+      </select>
+      <span id="connectionStatus" class="status"><i></i> Ready</span>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">DECENTRALIZED HEALTHCARE DEMO</p>
+        <h1>Medical records,<br><em>with a verifiable history.</em></h1>
+        <p class="hero-copy">A demonstration interface for authorized providers to register and retrieve sample medical records on an EVM blockchain.</p>
+      </div>
+      <div class="hero-card"><span class="pulse"></span><div><strong id="networkLabel">Hardhat Local (Chain 31337)</strong><small>NETWORK STATUS</small></div></div>
+    </section>
+
+    <section class="notice"><strong>Demo only.</strong> Blockchain data is public and permanent. Use fictional sample data only—never enter real patient names, diagnoses, or treatment details.</section>
+
+    <section class="stats">
+      <article class="stat-card"><span class="stat-label">RECORDS REGISTERED</span><strong id="recordCount">—</strong><span class="stat-foot">Read from the smart contract</span></article>
+      <article class="stat-card"><span class="stat-label">CONNECTED ACCOUNT</span><strong id="accountShort">Connecting…</strong><span class="stat-foot">Wallet used for transactions</span></article>
+      <article class="stat-card"><span class="stat-label">PROVIDER ACCESS</span><strong id="providerStatus">Checking…</strong><span class="stat-foot">Contract-level permission check</span></article>
+    </section>
+
+    <section class="workspace">
+      <article class="panel">
+        <div class="panel-heading"><div><p class="eyebrow">01 / CREATE</p><h2>Register a record</h2></div><span class="step">WRITE</span></div>
+        <p class="muted">Only the contract owner or an authorized provider wallet can submit a record.</p>
+        <form id="recordForm">
+          <label>Patient reference ID<input id="f_patientId" name="patientId" placeholder="e.g. DEMO-001" required maxlength="40"></label>
+          <label>Patient display name<input id="f_patientName" name="patientName" placeholder="e.g. Sample Patient A" required maxlength="80"></label>
+          <label>Diagnosis<input id="f_diagnosis" name="diagnosis" placeholder="e.g. Seasonal fever (demo)" required maxlength="160"></label>
+          <label>Treatment<input id="f_treatment" name="treatment" placeholder="e.g. Rest and fluids (demo)" required maxlength="160"></label>
+          <label>Doctor / provider name<input id="f_doctorName" name="doctorName" placeholder="e.g. Dr Demo" required maxlength="80"></label>
+          <button class="button button-primary" type="submit">Submit to blockchain <span>↗</span></button>
+        </form>
+        <div class="quick-btn-row">
+          <button type="button" id="autofillBtn" class="button button-outline button-small">⚡ Fill Sample Record</button>
+          <span>Click to populate test data</span>
+        </div>
+        <p class="form-hint">Transactions are signed and mined instantly by your local node.</p>
+      </article>
+
+      <article class="panel">
+        <div class="panel-heading"><div><p class="eyebrow">02 / RETRIEVE</p><h2>Find a record</h2></div><span class="step">READ</span></div>
+        <p class="muted">Enter the numeric record ID assigned by the contract (starting at 1).</p>
+        <form id="lookupForm" class="lookup-form">
+          <label>Record ID<input id="lookupIdInput" name="recordId" type="number" min="1" step="1" placeholder="e.g. 1" required></label>
+          <button class="button button-dark" type="submit">Retrieve record</button>
+        </form>
+        <div class="quick-btn-row">
+          <button type="button" id="viewLatestBtn" class="button button-outline button-small">View Latest Record</button>
+        </div>
+        <div id="recordResult" class="result-empty"><div class="empty-icon">↳</div><strong>No record selected</strong><span>Retrieved details will appear here.</span></div>
+      </article>
+    </section>
+
+    <section class="panel access-panel">
+      <div class="panel-heading"><div><p class="eyebrow">03 / ACCESS CONTROL</p><h2>Authorize a provider</h2></div><span class="step">OWNER ONLY</span></div>
+      <p class="muted">The contract owner can grant or revoke write access by wallet address. This does not make on-chain record contents private.</p>
+      <form id="accessForm" class="access-form">
+        <label>Provider wallet address<input id="providerAddressInput" name="providerAddress" placeholder="0x…" required></label>
+        <div class="access-actions">
+          <button class="button button-primary" type="submit" name="authorized" value="true">Authorize provider</button>
+          <button class="button button-outline" type="submit" name="authorized" value="false">Revoke access</button>
+        </div>
+      </form>
+      <div class="quick-btn-row">
+        <span>Quick paste:</span>
+        <button type="button" id="fillAccount1Btn" class="button button-outline button-small">Dr. Sarah (Account #1)</button>
+        <button type="button" id="fillAccount2Btn" class="button button-outline button-small">Guest (Account #2)</button>
+      </div>
+    </section>
+
+    <section class="activity panel">
+      <div class="panel-heading"><div><p class="eyebrow">TRANSACTION FEEDBACK</p><h2>Activity log</h2></div><button id="refreshBtn" class="button button-outline button-small">Refresh</button></div>
+      <div id="activityLog" class="activity-log"><p class="muted">Connect a wallet and configure the contract to begin.</p></div>
+    </section>
+
+    <footer><span>MedLedger · Educational mini project</span><span>Solidity · EVM · ethers.js</span></footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
